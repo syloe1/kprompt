@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 
 	"github.com/kprompt/kprompt/internal/config"
+	"github.com/kprompt/kprompt/internal/intent"
 	"github.com/kprompt/kprompt/internal/llm"
 	"github.com/kprompt/kprompt/internal/output"
 )
@@ -193,5 +194,37 @@ func TestMultiContextOptimizeFanOut(t *testing.T) {
 		if f.ClusterContext == "" {
 			t.Fatalf("finding missing cluster_context: %+v", f)
 		}
+	}
+}
+func TestSupportsReadFanOut(t *testing.T) {
+	tests := []struct {
+		name string
+		kind intent.Kind
+		want bool
+	}{
+		{"get", intent.KindGet, true},
+		{"explain", intent.KindExplain, true},
+		{"investigate", intent.KindInvestigate, true},
+		{"why", intent.KindWhy, true},
+		{"timeline", intent.KindTimeline, true},
+		{"impact", intent.KindImpact, true},
+		{"audit", intent.KindAudit, true},
+		{"cleanup", intent.KindCleanup, true},
+		{"logs", intent.KindLogs, true},
+		{"describe", intent.KindDescribe, true},
+		{"optimize", intent.KindOptimize, true},
+
+		{"scale", intent.KindScale, false},
+		{"deploy", intent.KindDeploy, false},
+		{"delete", intent.KindDelete, false},
+		{"unknown", intent.KindUnknown, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := supportsReadFanOut(tt.kind); got != tt.want {
+				t.Fatalf("supportsReadFanOut(%q) = %v, want %v", tt.kind, got, tt.want)
+			}
+		})
 	}
 }

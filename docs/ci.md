@@ -29,7 +29,7 @@ Manifests and API keys are never included.
 
 ## Multi-context (`MultiContextResult`)
 
-When `--contexts a,b` (or NL “across …”) fans out a **read** (or optimize):
+When `--contexts a,b` (or NL “across …”) fans out a supported read kind (`get`, `explain`, `investigate`, `why`, `timeline`, `impact`, `audit`, `cleanup`, `logs`, `describe`, or `optimize`):
 
 | Field | Notes |
 |-------|--------|
